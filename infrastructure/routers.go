@@ -1,20 +1,21 @@
 package infrastructure
 
 import (
-	"book-store-of-xambration-go/api/routers"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
-func RouterSetup() {
-	router := gin.Default()
+func RouterConfig(register func(engine *gin.Engine)) {
+	engine := gin.Default()
 
-	apiV1 := router.Group("/v1/api")
+	register(engine)
+	addHealthCheck(engine)
 
-	routers.BooksRegister(apiV1)
-	addHealthCheck(router)
+	if err := engine.Run(":8080"); err != nil {
+		log.Fatal(err.Error())
+	}
 
-	router.Run(":8080")
 }
 
 func addHealthCheck(router *gin.Engine) {
